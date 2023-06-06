@@ -22,4 +22,4 @@ COPY --from=build /usr/src/app/package*.json ./
 
 EXPOSE 5003
 
-CMD [ "npm", "start" ]
+CMD [ "node", "dist/main.js" ]

@@ -3,6 +3,8 @@ import { OrderModule } from './order.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { protobufPackage } from './proto/order.pb';
 
+require('dotenv').config();
+
 async function bootstrap() {
   const app = await NestFactory.create(OrderModule);
   app.connectMicroservice<MicroserviceOptions>(
@@ -20,7 +22,7 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: ['localhost:9092'],
+        brokers: [process.env.KAFKA_BROKER_URL || 'localhost:9092'],
       },
       consumer: {
         groupId: 'order-service-group',
