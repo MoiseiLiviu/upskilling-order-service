@@ -23,6 +23,8 @@ import { OutboxRepository } from '../domain/repository/outbox.repository';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { OutboxCleanerScheduler } from "./outbox/outbox-cleaner.scheduler";
 
+require('dotenv').config();
+
 @Module({
   imports: [
     LoggerModule,
@@ -33,7 +35,7 @@ import { OutboxCleanerScheduler } from "./outbox/outbox-cleaner.scheduler";
         transport: Transport.KAFKA,
         options: {
           client: {
-            brokers: ['localhost:9092'],
+            brokers: [process.env.KAFKA_BROKER_URL || 'localhost:9092'],
           },
           consumer: {
             groupId: 'order-service-group',

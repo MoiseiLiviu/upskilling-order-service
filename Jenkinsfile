@@ -6,7 +6,7 @@ pipeline {
     environment {
         IMAGE_VERSION = '1.0'
         DOCKERHUB_CREDS = 'dockerhub_creds'
-        DOCKER_IMAGE = 'lmoisei/cart-service'
+        DOCKER_IMAGE = 'lmoisei/order-service'
         DOCKER_REGISTRY_URL = 'https://index.docker.io/v1/'
     }
 
@@ -14,15 +14,15 @@ pipeline {
 stage('Checkout') {
     steps {
         script {
-            if (fileExists('upskilling-cart-service/.git')) {
-                dir('upskilling-cart-service') {
+            if (fileExists('upskilling-order-service/.git')) {
+                dir('upskilling-order-service') {
                     sh('git pull')
                     COMMIT_HASH = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
                     echo "COMMIT_HASH is: ${COMMIT_HASH}" // Print the commit hash
                 }
             } else {
-                sh('git clone https://github.com/MoiseiLiviu/upskilling-cart-service.git')
-                dir('upskilling-cart-service') {
+                sh('git clone https://github.com/MoiseiLiviu/upskilling-order-service.git')
+                dir('upskilling-order-service') {
                     sh('git checkout main')
                     COMMIT_HASH = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
                     echo "COMMIT_HASH is: ${COMMIT_HASH}" // Print the commit hash
@@ -35,7 +35,7 @@ stage('Checkout') {
 
         stage('Build Nest.js Project') {
             steps {
-                dir('upskilling-cart-service') {
+                dir('upskilling-order-service') {
                     sh('npm install')
                     sh('npm run build')
                 }
@@ -45,7 +45,7 @@ stage('Checkout') {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dir('upskilling-cart-service') {
+                    dir('upskilling-order-service') {
                         docker.build("${DOCKER_IMAGE}:${COMMIT_HASH}")
                     }
                 }
@@ -67,7 +67,7 @@ stage('Update Kubernetes Deployment') {
         script {
             withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                 // Set the new image in the deployment
-                sh("kubectl set image deployment/cart cart=${DOCKER_IMAGE}:${COMMIT_HASH} --record")
+                sh("kubectl set image deployment/order cart=${DOCKER_IMAGE}:${COMMIT_HASH} --record")
                 // Rollout status can be used to ensure the deployment update is successful
                 sh("kubectl rollout status deployment/cart")
             }
