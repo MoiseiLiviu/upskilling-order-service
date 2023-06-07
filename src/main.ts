@@ -13,7 +13,7 @@ async function bootstrap() {
       options: {
         package: protobufPackage,
         protoPath: 'node_modules/upskilling-protos/proto/order.proto',
-        url: 'localhost:5003',
+        url: '0.0.0.0:5003',
       },
     },
     { inheritAppConfig: true },
