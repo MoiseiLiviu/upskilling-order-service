@@ -67,7 +67,7 @@ stage('Update Kubernetes Deployment') {
         script {
             withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                 // Set the new image in the deployment
-                sh("kubectl set image deployment/order cart=${DOCKER_IMAGE}:${COMMIT_HASH} --record")
+                sh("kubectl set image deployment/order order=${DOCKER_IMAGE}:${COMMIT_HASH} --record")
                 // Rollout status can be used to ensure the deployment update is successful
                 sh("kubectl rollout status deployment/cart")
             }
